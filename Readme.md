@@ -21,7 +21,7 @@ This plugin can handle  remote commands, inline scripts and file / url paths.
 * Copy the zip file to $RDECK_BASE/libext
 * Edit your project and select "Powershell Executor" as the default node executor and "Powershell script runner" as the Default Node Copier
 * In the Default Node Executor section add the username and password Keystore (only used when invoking commands against a remote host) and select the Authentication Type.
-* For the work flow steps the need it set Invocation String to PowerShell and File Extension to ps1
+* For the work flow steps that need it set Invocation String to PowerShell and File Extension to ps1
 
 ## Credits
 
