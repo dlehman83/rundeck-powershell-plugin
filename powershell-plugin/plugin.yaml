@@ -1,17 +1,18 @@
 # yaml plugin metadata
  
 name: powershell-plugin
-version: 0.1
+version: 0.3
 rundeckPluginVersion: 1.0
 author: giordano bianchi <giordy@giordy.it>
-date: 06/27/2017
+author: dlehman83
+date: 09/17/2022
 providers:
   - name: PSExe
     title: Powershell Executor
     description: Executing Powershell Scripts or commands on remote windows computer
     service: NodeExecutor
     plugin-type: script
-    script-interpreter: /usr/bin/powershell
+    script-interpreter: powershell
     script-file: ps-nodeexecutor.ps1
     script-args: 
     config:
@@ -30,13 +31,17 @@ providers:
         required: false
         scope: Instance
         renderingOptions:
-          displayType: PASSWORD
+            selectionAccessor: "STORAGE_PATH"
+            valueConversion: "STORAGE_PATH_AUTOMATIC_READ"
+            storage-path-root: "keys"
+            storage-file-meta-filter: "Rundeck-data-type=password"
+            instance-scope-node-attribute: "password-storage-path"
       - name: authtype
         title: Auth type
         description: "Authentication type"
         type: Select
         values: "negotiate, ssl, kerberos, basic"
-        default: "basic"
+        default: "kerberos"
         required: true
         scope: Instance
         renderingOptions:
@@ -55,8 +60,48 @@ providers:
     title: Powershell script runner
     service: FileCopier
     plugin-type: script
-    script-interpreter: /usr/bin/powershell
+    script-interpreter: powershell 
     script-file: ps-filecopier.ps1
     script-args: -Filepath ${file-copy.file} -Destpath ${file-copy.destination}
     script-file-extension: ps1    
     config:
+      - name: user
+        title: Username
+        description: "Username in DOMAIN\\name form"
+        type: String
+        required: false
+        scope: Instance
+        renderingOptions:
+          instance-scope-node-attribute: "user"
+      - name: pass
+        title: Password
+        description: "Password"
+        type: String
+        required: false
+        scope: Instance
+        renderingOptions:
+            selectionAccessor: "STORAGE_PATH"
+            valueConversion: "STORAGE_PATH_AUTOMATIC_READ"
+            storage-path-root: "keys"
+            storage-file-meta-filter: "Rundeck-data-type=password"
+            instance-scope-node-attribute: "password-storage-path"
+      - name: authtype
+        title: Auth type
+        description: "Authentication type"
+        type: Select
+        values: "negotiate, ssl, kerberos, basic"
+        default: "kerberos"
+        required: true
+        scope: Instance
+        renderingOptions:
+          instance-scope-node-attribute: "authtype"
+      - name: allowoverride
+        title: Allow Override
+        description: "Gives possibility to override hostname, username (and password) in job options"
+        type: Select
+        values: "none, host, user, all"
+        default: "none"
+        required: true
+        scope: Instance
+        renderingOptions:
+          instance-scope-node-attribute: "allowoverride"

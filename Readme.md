@@ -2,51 +2,29 @@
 
 ## Description
 
-A [Rundeck Node Executor](http://rundeck.org/docs/plugins-user-guide/node-execution-plugins.html) plugin that allow to execute commands on local or remote nodes via native Powershell.
+A [Rundeck Node Executor](http://rundeck.org/docs/plugins-user-guide/node-execution-plugins.html) plugin that allow to execute commands on local or remote nodes via native PowerShell.
 
-Tested on Centos 7.3 with [Rundeck](http://rundeck.org) 2.8.4 and [Powershell 6.0b4](https://github.com/PowerShell/PowerShell)
+Tested on Server Windows Server 2019/2022 with [Rundeck](http://rundeck.org) 4.6.0
 
-The idea is to replace the WinRM ruby plugin with the native Linux Powershell implementation.
+The idea is to replace the PyWinRM  plugin with the native Windows PowerShell implementation. 
 
-_A note about the remote node authentication: the plugin supports both Basic and Negotiate(NTLM) types of authentication (tested on Windows Server 2012R2/2016). For security reasons, please use the "Negotiate" authentication type (encrypted) instead of basic (unencrypted)_
+If PowerShell remoting is setup in your domain, no additional configuration is needed.  
 
+Uses combination of Invoke-Command, Copy-Item and New-PSSession
 
-## Setup Powershell for Linux NTLM Authentication
+This is a rough conversion from the Linux version.  it needs a lot more logging and error handling, but it works.  
 
-In order to configure NTLM on Linux, on top of the powershell binaries you will need to install the following packages:
-
-* epel-release
-* krb5-workstation
-* krb5-devel
-* gssntlmssp (requires epel-release to be installed beforehand)
+This plugin can handle  remote commands, inline scripts and file / url paths.
 
 ## Installation
 
-* Copy the zip file in $RDECK_BASE/libext
+* Copy the zip file to $RDECK_BASE/libext
 * Edit your project and select "Powershell Executor" as the default node executor and "Powershell script runner" as the Default Node Copier
-* In the Default Node Executor section add the username and password (only used when invoking commands against a remote host) and select the Authentication Type.
-* Edit your rundeck resources.xml and for each remote node add: 
-  * node-executor="PSExe" file-copier="PSScript"
-* if you want to run Powershell against your Rundeck Server you also need to add
-  * local-node-executor="PSExe" file-copier="PSScript"
-
-## Configuration on Windows (only needed for Basic Auth)
-```
-winrm set winrm/config/client/auth @{Basic="true"}
-winrm set winrm/config/service/auth @{Basic="true"}
-winrm set winrm/config/service @{AllowUnencrypted="true"}
-```
-
-## Details
-
-This plugin can handle both remote commands and inline scripts.
-
-If the script/command is run agains the local Rundeck host it will just run the command or the script in the local powershell environment
-
-if the script/command is run against a remote node  it will run an invoke-command.
-
-The script copier doesn't actually copy anything, it just handles the creation and deletion of the temp script files which get then either executed locally or added to invoke-command with the -filepath parameter
+* In the Default Node Executor section add the username and password Keystore (only used when invoking commands against a remote host) and select the Authentication Type.
+* For the work flow steps the need it set Invocation String to PowerShell and File Extension to ps1
 
 ## Credits
 
 Much of this work has been inspired by the [Rundeck Telnet Plugin](https://github.com/adomaceo/telnet-plugin) and the [Rundeck WinRM Plugin](https://github.com/rundeck-plugins/rundeck-winrm-plugin)
+
+Updated / converted to run in a windows domain environment from [giordyb/rundeck-powershell-plugin](https://github.com/giordyb/rundeck-powershell-plugin)
