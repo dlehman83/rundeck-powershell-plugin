@@ -2,7 +2,7 @@
 
 ## Description
 
-A [Rundeck Node Executor](http://rundeck.org/docs/plugins-user-guide/node-execution-plugins.html) plugin that allow to execute commands on local or remote nodes via native PowerShell.
+A Rundeck Node Executor plugin that will execute commands on local or remote nodes via native PowerShell.
 
 Tested on Server Windows Server 2019/2022 with [Rundeck](http://rundeck.org) 4.6.0
 
